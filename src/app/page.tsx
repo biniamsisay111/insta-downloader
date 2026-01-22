@@ -52,13 +52,21 @@ export default function Home() {
 
   const handlePaste = async () => {
     try {
+      // Modern API check
+      if (!navigator.clipboard) {
+        throw new Error('Clipboard API not available');
+      }
+
       const text = await navigator.clipboard.readText();
       if (text) {
         setUrl(text);
+      } else {
+        alert('Clipboard is empty. Please copy a link first.');
       }
     } catch (err) {
       console.error('Failed to read clipboard:', err);
       setError('Clipboard access denied. Please paste manually.');
+      alert('Please paste manually');
     }
   };
 
