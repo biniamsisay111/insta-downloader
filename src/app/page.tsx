@@ -14,7 +14,14 @@ export default function Home() {
   const fetchReelInfo = async (targetUrl: string) => {
     if (!targetUrl || targetUrl === lastFetchedUrl.current) return;
 
-    // Basic Instagram URL validation
+    // Validate that the URL contains 'instagram.com'
+    if (!targetUrl.includes('instagram.com')) {
+      setError('Invalid Link: This is not an Instagram URL.');
+      setResult(null);
+      return;
+    }
+
+    // Basic Instagram URL validation for reels
     if (!targetUrl.includes('instagram.com/reel') && !targetUrl.includes('instagram.com/reels')) {
       return;
     }

@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
     const range = request.headers.get('range');
 
     const headers: HeadersInit = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36',
+        'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1',
         'Referer': 'https://www.instagram.com/',
         'Accept': '*/*',
         'Connection': 'keep-alive',

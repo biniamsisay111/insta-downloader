@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobile Test - Instagram Downloader</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #000;
+            color: #fff;
+        }
+        .container {
+            max-width: 390px;
+            margin: 0 auto;
+        }
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        .test-section {
+            background: #1a1a1a;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .test-title {
+            font-size: 14px;
+            color: #888;
+            margin-bottom: 10px;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            background: #000;
+            color: #fff;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        .success {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            color: #22c55e;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #888;
+        }
+        .result-card {
+            background: #1a1a1a;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .download-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 14px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📱 Mobile Test</h1>
+        
+        <!-- Test 1: Invalid URL -->
+        <div class="test-section">
+            <div class="test-title">Test 1: Invalid URL (YouTube)</div>
+            <input type="text" id="test1-input" value="https://www.youtube.com/watch?v=test" readonly>
+            <button onclick="testInvalidUrl()">Test Invalid URL</button>
+            <div id="test1-result"></div>
+        </div>
+
+        <!-- Test 2: Valid Instagram URL -->
+        <div class="test-section">
+            <div class="test-title">Test 2: Valid Instagram Reel</div>
+            <input type="text" id="test2-input" value="https://www.instagram.com/reel/C2kQxZJPxYz/" readonly>
+            <button onclick="testValidUrl()">Test Valid URL</button>
+            <div id="test2-result"></div>
+        </div>
+    </div>
+
+    <script>
+        async function testInvalidUrl() {
+            const resultDiv = document.getElementById('test1-result');
+            const url = document.getElementById('test1-input').value;
+            
+            resultDiv.innerHTML = '<div class="loading">Testing...</div>';
+            
+            try {
+                const response = await fetch(`/api/fetch-reel?url=${encodeURIComponent(url)}`);
+                const data = await response.json();
+                
+                if (!response.ok && data.error) {
+                    resultDiv.innerHTML = `<div class="error">✅ PASS: ${data.error}</div>`;
+                } else {
+                    resultDiv.innerHTML = '<div class="error">❌ FAIL: Expected error but got success</div>';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">❌ ERROR: ${error.message}</div>`;
+            }
+        }
+
+        async function testValidUrl() {
+            const resultDiv = document.getElementById('test2-result');
+            const url = document.getElementById('test2-input').value;
+            
+            resultDiv.innerHTML = '<div class="loading">Testing... (may take 2-5 seconds due to random delay)</div>';
+            
+            try {
+                const response = await fetch(`/api/fetch-reel?url=${encodeURIComponent(url)}`);
+                const data = await response.json();
+                
+                if (response.ok && data.video_url) {
+                    resultDiv.innerHTML = `
+                        <div class="success">✅ PASS: Video extracted successfully!</div>
+                        <div class="result-card">
+                            <div style="font-size: 12px; color: #888; margin-bottom: 8px;">Title:</div>
+                            <div style="margin-bottom: 15px;">${data.title}</div>
+                            <div style="font-size: 12px; color: #888; margin-bottom: 8px;">Video URL:</div>
+                            <div style="font-size: 11px; word-break: break-all; color: #667eea; margin-bottom: 15px;">${data.video_url.substring(0, 80)}...</div>
+                            <div class="download-btn">⬇️ SAVE VIDEO</div>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `<div class="error">❌ FAIL: ${data.error || 'Unknown error'}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">❌ ERROR: ${error.message}</div>`;
+            }
+        }
+    </script>
+</body>
+</html>
