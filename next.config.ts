@@ -4,7 +4,7 @@ const nextConfig: NextConfig = {
   devIndicators: {
     position: 'bottom-right',
   },
-  // Add these lines below to bypass the Vercel build errors
+  // These lines allow the build to finish even if there are small typos
   typescript: {
     ignoreBuildErrors: true,
   },
